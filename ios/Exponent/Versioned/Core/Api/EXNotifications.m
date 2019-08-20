@@ -53,7 +53,6 @@ EX_EXPORT_SCOPED_MULTISERVICE_MODULE(ExponentNotifications, @"RemoteNotification
     _userNotificationCenter = kernelServiceInstances[@"UserNotificationCenter"];
     _remoteNotificationsDelegate = kernelServiceInstances[@"RemoteNotificationManager"];
     _notificationsIdentifiersManager = kernelServiceInstances[@"UserNotificationManager"];
-    [[EXThreadSafePostOffice sharedInstance] registerModuleAndGetPendingDeliveriesWithExperienceId:self.experienceId mailbox:self]; // remove 
   }
   return self;
 }
@@ -365,11 +364,11 @@ RCT_REMAP_METHOD(deleteCategoryAsync,
   if ([payload[@"categoryId"] isKindOfClass:[NSString class]]) {
     content.categoryIdentifier = [self internalIdForIdentifier:payload[@"categoryId"]];
   }
-  
+
   content.userInfo = @{
                        @"body": payload[@"data"],
                        @"experienceId": self.experienceId,
-                       @"id": uniqueId,
+                       @"id": uniqueId
                        };
 
   return content;
@@ -435,26 +434,6 @@ RCT_REMAP_METHOD(deleteCategoryAsync,
   }
 
   return [UNNotificationAction actionWithIdentifier:actionId title:buttonTitle options:options];
-}
-
-- (void)setModuleRegistry:(UMModuleRegistry *)moduleRegistry
-{
-  [[EXThreadSafePostOffice sharedInstance] registerModuleAndGetPendingDeliveriesWithExperienceId:self.experienceId mailbox:self];
-}
-
-- (void)dealloc
-{
-  [[EXThreadSafePostOffice sharedInstance] unregisterModuleWithExperienceId:self.experienceId];
-}
-
-- (void)onForegroundNotification:(NSDictionary *)notification
-{
-  //TODO send to "Exponent.onUserInteraction"
-}
-
-- (void)onUserInteraction:(NSDictionary *)userInteraction
-{
-  //TODO send to "Exponent.onForegroundNotification"
 }
 
 @end

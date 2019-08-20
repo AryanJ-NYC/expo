@@ -9,7 +9,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.os.Bundle;
 import android.support.v4.app.NotificationManagerCompat;
 
 import host.exp.exponent.Constants;
@@ -23,14 +22,11 @@ import org.json.JSONObject;
 
 import javax.inject.Inject;
 
-import host.exp.exponent.notifications.insecurecheduler.ScheduledNotificationReceiver;
 import host.exp.exponent.storage.ExponentSharedPreferences;
 import host.exp.expoview.R;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 public class ExponentNotificationManager {
@@ -199,7 +195,8 @@ public class ExponentNotificationManager {
   }
 
   public void cancel(String experienceId, int id) {
-    NotificationManagerCompat.from(mContext).cancel(id);
+    NotificationManagerCompat.from(mContext).cancel(experienceId, id);
+
     try {
       JSONObject metadata = mExponentSharedPreferences.getExperienceMetadata(experienceId);
       if (metadata == null) {
@@ -245,14 +242,14 @@ public class ExponentNotificationManager {
     }
   }
 
-  public void schedule(String experienceId, int id, HashMap notification, long time, Long interval) throws ClassNotFoundException {
+  public void schedule(String experienceId, int id, HashMap details, long time, Long interval) throws ClassNotFoundException {
     Intent notificationIntent = new Intent(mContext, ScheduledNotificationReceiver.class);
 
     notificationIntent.setType(experienceId);
     notificationIntent.setAction(String.valueOf(id));
 
     notificationIntent.putExtra(KernelConstants.NOTIFICATION_ID_KEY, id);
-    notificationIntent.putExtra(KernelConstants.NOTIFICATION_OBJECT_KEY, notification);
+    notificationIntent.putExtra(KernelConstants.NOTIFICATION_OBJECT_KEY, details);
 
     PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 

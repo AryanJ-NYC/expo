@@ -5,8 +5,6 @@
 #import "EXRemoteNotificationManager.h"
 #import "EXEnvironment.h"
 #import "EXAppLoader.h"
-#import "EXPostOffice.h"
-#import "EXThreadSafePostOffice.h"
 
 static NSString * const scopedIdentifierSeparator = @":";
 
@@ -51,13 +49,9 @@ static NSString * const scopedIdentifierSeparator = @":";
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)(void))completionHandler
 {
   EXPendingNotification *pendingNotification = [[EXPendingNotification alloc] initWithNotificationResponse:response identifiersManager:self];
-  
-  /*if (![[EXKernel sharedInstance] sendNotification:pendingNotification] && [EXEnvironment sharedEnvironment].isDetached) {
+  if (![[EXKernel sharedInstance] sendNotification:pendingNotification] && [EXEnvironment sharedEnvironment].isDetached) {
     _pendingNotification = pendingNotification;
-  }*/
-  
-  NSString *experienceId = response.notification.request.content.userInfo[@"experienceId"];
-  [[EXThreadSafePostOffice sharedInstance] notifyAboutUserInteractionForExperienceId:experienceId userInteraction:[pendingNotification propertiesUserInteractionFormat]];
+  }
   completionHandler();
 }
 
@@ -92,13 +86,9 @@ static NSString * const scopedIdentifierSeparator = @":";
   // If the app is active we do not show the alert, but we deliver the notification to the experience.
 
   EXPendingNotification *pendingNotification = [[EXPendingNotification alloc] initWithNotification:notification];
-  
-  /*if (![[EXKernel sharedInstance] sendNotification:pendingNotification] && [EXEnvironment sharedEnvironment].isDetached) {
+  if (![[EXKernel sharedInstance] sendNotification:pendingNotification] && [EXEnvironment sharedEnvironment].isDetached) {
     _pendingNotification = pendingNotification;
-  }*/
-  
-  NSString *experienceId = userInfo[@"experienceId"];
-  [[EXThreadSafePostOffice sharedInstance] notifyAboutForegroundNotificationForExperienceId:experienceId notification:[pendingNotification propertiesForegroundNotificationFormat]];
+  }
 
   completionHandler(UNNotificationPresentationOptionNone);
 }

@@ -12,7 +12,5 @@
 - (instancetype)initWithNotificationResponse:(UNNotificationResponse *)notificationResponse identifiersManager:(id<EXNotificationsIdentifiersManager>)manager;
 
 - (NSDictionary *)properties;
-- (NSDictionary *)propertiesForegroundNotificationFormat;
-- (NSDictionary *)propertiesUserInteractionFormat;
 
 @end

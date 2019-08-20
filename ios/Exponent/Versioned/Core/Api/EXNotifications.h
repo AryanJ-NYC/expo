@@ -4,10 +4,6 @@
 #import "EXScopedBridgeModule.h"
 #import "EXScopedModuleRegistry.h"
 
-#import "EXPostOffice.h"
-#import "EXThreadSafePostOffice.h"
-#import "EXMailbox.h"
-
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol EXUserNotificationCenterService
@@ -42,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface EXNotifications : EXScopedBridgeModule <EXMailbox>
+@interface EXNotifications : EXScopedBridgeModule
 
 @end
 

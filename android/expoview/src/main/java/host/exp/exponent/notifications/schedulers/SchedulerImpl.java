@@ -6,7 +6,6 @@ import java.util.HashMap;
 
 import host.exp.exponent.notifications.ExponentNotificationManager;
 import host.exp.exponent.notifications.exceptions.UnableToScheduleException;
-import host.exp.exponent.notifications.insecurecheduler.ThreadSafeInsecureScheduler;
 
 public class SchedulerImpl implements Scheduler {
 
@@ -32,10 +31,14 @@ public class SchedulerImpl implements Scheduler {
     }
 
     String experienceId = mSchedulerModel.getOwnerExperienceId();
-    int notificationId = mSchedulerModel.getId();
+    int notificationId = mSchedulerModel.getNotificationId();
     HashMap<String, Object> details = mSchedulerModel.getDetails();
 
-    ThreadSafeInsecureScheduler.getInstance().schedule(experienceId, nextAppearanceTime, notificationId, details, mApplicationContext);
+    try {
+      getManager().schedule(experienceId, notificationId, details, nextAppearanceTime, null);
+    } catch (ClassNotFoundException e) {
+      e.printStackTrace();
+    }
   }
 
   @Override
@@ -51,8 +54,8 @@ public class SchedulerImpl implements Scheduler {
   @Override
   public void cancel() {
     String experienceId = mSchedulerModel.getOwnerExperienceId();
-    int notificationId = mSchedulerModel.getId();
-    ThreadSafeInsecureScheduler.getInstance().cancelScheduled(experienceId, notificationId, mApplicationContext);
+    int notificationId = mSchedulerModel.getNotificationId();
+    getManager().cancel(experienceId, notificationId);
   }
 
   @Override
@@ -76,4 +79,7 @@ public class SchedulerImpl implements Scheduler {
     mSchedulerModel.remove();
   }
 
+  private ExponentNotificationManager getManager() {
+    return new ExponentNotificationManager(mApplicationContext);
+  }
 }

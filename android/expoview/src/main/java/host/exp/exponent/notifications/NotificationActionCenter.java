@@ -17,8 +17,6 @@ import java.util.UUID;
 
 import host.exp.exponent.kernel.KernelConstants;
 
-import static host.exp.exponent.notifications.NotificationConstants.NOTIFICATION_CATEGORY;
-
 public class NotificationActionCenter {
   public static final String KEY_TEXT_REPLY = "notification_remote_input";
 
@@ -26,7 +24,7 @@ public class NotificationActionCenter {
     throwExceptionIfOnMainThread();
     for (int i = 0; i < actions.size(); i++) {
       Map<String, Object> action = actions.get(i);
-      action.put(NOTIFICATION_CATEGORY, categoryId);
+      action.put("categoryId", categoryId);
       ActionObject actionObject = new ActionObject(action, i);
       actionObject.save();
     }

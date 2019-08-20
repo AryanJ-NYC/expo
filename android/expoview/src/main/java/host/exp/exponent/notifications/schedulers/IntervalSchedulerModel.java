@@ -15,9 +15,7 @@ import org.json.JSONException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
-import host.exp.exponent.notifications.helpers.HashMapSerializer;
 import host.exp.exponent.notifications.managers.SchedulersManagerProxy;
 import host.exp.exponent.notifications.managers.SchedulersDatabase;
 
@@ -28,13 +26,18 @@ public class IntervalSchedulerModel extends BaseModel implements SchedulerModel 
       Intent.ACTION_REBOOT,
       Intent.ACTION_BOOT_COMPLETED);
 
+  private Context mApplicationContext;
+
   private HashMap<String, Object> details;
 
   // -- model fields --
 
   @Column
-  @PrimaryKey
+  @PrimaryKey(autoincrement = true)
   int id;
+
+  @Column
+  int notificationId;
 
   @Column
   String experienceId;
@@ -60,7 +63,7 @@ public class IntervalSchedulerModel extends BaseModel implements SchedulerModel 
 
   @Override
   public String saveAndGetId() {
-    this.id = Math.abs(new Random().nextInt(Integer.MAX_VALUE));
+    save(); // get id from database
     details.put(SchedulersManagerProxy.SCHEDULER_ID, getIdAsString());
     setDetails(details);
     save();
@@ -74,7 +77,7 @@ public class IntervalSchedulerModel extends BaseModel implements SchedulerModel 
 
   @Override
   public String getIdAsString() {
-    return Integer.valueOf(id).toString();
+    return Integer.valueOf(id).toString() + this.getClass().getSimpleName();
   }
 
   @Override
@@ -118,6 +121,14 @@ public class IntervalSchedulerModel extends BaseModel implements SchedulerModel 
 
   public void setId(int id) {
     this.id = id;
+  }
+
+  public int getNotificationId() {
+    return notificationId;
+  }
+
+  public void setNotificationId(int notificationId) {
+    this.notificationId = notificationId;
   }
 
   public String getExperienceId() {
@@ -166,7 +177,6 @@ public class IntervalSchedulerModel extends BaseModel implements SchedulerModel 
   }
 
   public HashMap<String, Object> getDetails() {
-    setSerializedDetails(this.serializedDetails);
     return details;
   }
 
